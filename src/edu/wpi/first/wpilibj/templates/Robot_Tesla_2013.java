@@ -74,7 +74,7 @@ public class Robot_Tesla_2013 extends SimpleRobot
     
     public void drive()
     {
-        m_RobotDrive.tankDrive(m_Driver.getRawAxis(LEFT_Y), m_Driver.getRawAxis(RIGHT_Y), false);
+        m_RobotDrive.tankDrive(m_Driver.getRawAxis(LEFT_Y)*-1, m_Driver.getRawAxis(RIGHT_Y)*-1, false);
         //m_Driver.getRawAxis()*-1 to invert
         
     }
