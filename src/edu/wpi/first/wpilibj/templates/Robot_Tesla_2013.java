@@ -10,6 +10,7 @@ package edu.wpi.first.wpilibj.templates;
 
 //import edu.wpi.first.wpilibj.Jaguar;
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.SimpleRobot;
@@ -25,23 +26,21 @@ import edu.wpi.first.wpilibj.Victor;
  */
 public class Robot_Tesla_2013 extends SimpleRobot 
 {
-    /**
-     *  Constants for tuning/adjusting the robot
-     */
-    
-    private static final int DIO_SLOT = 1; //Only a single slot
+    //Motors
+    private static final int cRIO_SLOT = 1; //Only a single slot
     private static final int LEFT_MOTOR_CHANNEL = 1;
     private static final int RIGHT_MOTOR_CHANNEL = 2;
-    private static final int MOTOR_CHANNEL_3 = 3; //Rename
-    private static final int MOTOR_CHANNEL_4 = 4;
-    private static final int MOTOR_CHANNEL_5 = 5;
+    private static final int ARM_MOTOR = 3;
+    private static final int FRISBEE_MOTOR = 4;
+    private static final int MOTOR_CHANNEL_5 = 5; //Rename
     
     SpeedController m_LeftDriveMotor;
     SpeedController m_RightDriveMotor;
-    SpeedController m_Motor_3; //Rename
-    SpeedController m_Motor_4;
-    SpeedController m_Motor_5;
+    SpeedController m_ArmMotor;
+    SpeedController m_FrisbeeMotor;
+    SpeedController m_Motor_5; //Rename
     
+    //Xbox Controllers
     private static final int LEFT_X = 1;
     private static final int LEFT_Y = 2;
     private static final int UNKNOWN = 3; //triggers?
@@ -51,32 +50,80 @@ public class Robot_Tesla_2013 extends SimpleRobot
     Joystick m_Driver; //Driver controller
     Joystick m_Secondary; //Shooter and Secondary controller
     
+    //Drive
     RobotDrive m_RobotDrive;
     
+    //Compressor
     Compressor m_Compressor;
+    
+    //Limit Switches
+    private static final int ARMTOP = 1;
+    private static final int ARMBOT = 2;
+    
+    DigitalInput m_ArmTop;
+    DigitalInput m_ArmBot;
+
     
     protected void robotInit() 
     {
-        m_LeftDriveMotor = new Victor(DIO_SLOT, LEFT_MOTOR_CHANNEL); //Digtial I/O,Relay
-        m_RightDriveMotor = new Victor(DIO_SLOT, RIGHT_MOTOR_CHANNEL);
-        m_Motor_3 = new Victor(DIO_SLOT, MOTOR_CHANNEL_3);
-        m_Motor_4 = new Victor(DIO_SLOT, MOTOR_CHANNEL_4);
-        m_Motor_5 = new Victor(DIO_SLOT, MOTOR_CHANNEL_5);
+        m_LeftDriveMotor = new Victor(cRIO_SLOT, LEFT_MOTOR_CHANNEL); //cRIO Slot,Channel
+        m_RightDriveMotor = new Victor(cRIO_SLOT, RIGHT_MOTOR_CHANNEL);
+        m_ArmMotor = new Victor(cRIO_SLOT, ARM_MOTOR);
+        m_FrisbeeMotor = new Victor(cRIO_SLOT, FRISBEE_MOTOR);
+        m_Motor_5 = new Victor(cRIO_SLOT, MOTOR_CHANNEL_5);
         
         m_Driver = new Joystick(1); //USB Port
         m_Secondary = new Joystick(2); 
         m_RobotDrive = new RobotDrive(m_LeftDriveMotor, m_RightDriveMotor);
         
-        m_Compressor = new Compressor(DIO_SLOT,1); //Digtial I/O,Relay
+        m_Compressor = new Compressor(cRIO_SLOT,1); //cRIO Slot,Channel
         m_Compressor.start(); 
-     
-    }   
+        
+        m_ArmTop = new DigitalInput(ARMTOP); //Channel
+        m_ArmBot = new DigitalInput(ARMBOT);
+    }  
     
+    /**
+     * This function is called for the drive system.
+     */
     public void drive()
     {
-        m_RobotDrive.tankDrive(m_Driver.getRawAxis(LEFT_Y)*-1, m_Driver.getRawAxis(RIGHT_Y)*-1, false);
+        m_RobotDrive.tankDrive(motorFixL()*-1, motorFixR()*-1, false);
         //m_Driver.getRawAxis()*-1 to invert
         
+    }
+    
+    public double motorFixL()
+    {
+        if (m_Driver.getRawAxis(LEFT_Y) <= .1 && m_Driver.getRawAxis(LEFT_Y) >= -.1) {
+            return 0;
+        } else {
+            return m_Driver.getRawAxis(LEFT_Y);
+        }
+    }
+    
+    public double motorFixR()
+    {
+        if (m_Driver.getRawAxis(RIGHT_Y) <= .1 && m_Driver.getRawAxis(RIGHT_Y) <= -.1) {
+            return 0;
+        } else {
+            return m_Driver.getRawAxis(RIGHT_Y);
+        }
+    }
+    
+    public void arm()
+    {
+        //X for extend toggle, left analog stick for up and down
+        //ArmTop.get(); //Use this to get a Boolean value
+        //ArmBot.get
+        /*if (isMoving) {
+        } else {
+        } */
+    }
+    
+    public void frisbee()
+    {
+        //B for spinup toggle, right trigger for piston fire
     }
     
     /**
@@ -96,6 +143,8 @@ public class Robot_Tesla_2013 extends SimpleRobot
         while (isOperatorControl() && isEnabled()) // loop during enabled teleop mode
             {             
             drive(); //Call drive function
+            //frisbee(); 
+            //arm();
             getWatchdog().feed(); //Feed the dog
             Timer.delay(0.005); //Delay loop
             }     
