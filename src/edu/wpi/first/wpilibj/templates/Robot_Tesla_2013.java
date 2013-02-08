@@ -83,11 +83,13 @@ public class Robot_Tesla_2013 extends SimpleRobot
     DriverStationLCD m_LCD;
     
     //Static Variables
-    int BButTog = 0;
+    boolean BButTog = false;
     int SetSpin = 0;
     boolean m_BButtonWasDown = false;
-    int XButTog = 0;
+    boolean XButTog = false;
     boolean m_XButtonWasDown = false;
+    boolean BackButTog = false;
+    boolean m_BackButtonWasDown = false;
     
     protected void robotInit() 
     {
@@ -151,6 +153,14 @@ public class Robot_Tesla_2013 extends SimpleRobot
          *  Left analog stick moves arm's hooks up and down
          */
         double armDir = motorFix(m_Secondary.getRawAxis(LEFT_Y)); //Reading secondary left Y axis
+        boolean m_XButtonDown = m_Secondary.getRawButton(X_BUT);
+        boolean m_XButtonPressed = m_XButtonDown && !m_XButtonWasDown;
+        m_XButtonWasDown = m_XButtonDown;
+
+        boolean m_BackButtonDown = m_Secondary.getRawButton(BACK_BUT);
+        boolean m_BackButtonPressed = m_BackButtonDown && !m_BackButtonWasDown;
+        m_BackButtonWasDown = m_BackButtonDown;
+        
         if (armDir < 0) //If going down..
         { 
             if (m_ArmBot.get()) //..and it hits the bottom..
@@ -167,27 +177,45 @@ public class Robot_Tesla_2013 extends SimpleRobot
         }
         m_ArmMotor.set(armDir);
         
-//        m_XButtonDown = getRawButton(X_BUT);
-//        m_XbuttonPressed = m_XButtonDown && !m_XButtonWasDown;
-//        m_XButtonWasDown = m_XButtonDown;
-//        
-//        m_BackButtonDown = getRawButton(BACK_BUT);
-//        m_BackButtonPressed = m_BackButtonDown && !m_BackButtonWasDown;
-//        m_BackButtonWasDown = m_BackButtonDown;
-//        
-//        
-//             
-//        if (m_Secondary.getRawButton(X_BUT))
-//        {
-//            if (XButTog == 0)
-//            {
-//                m_ArmPist.set(true);
-//            }
-//            if (m_Secondary.getRawButton(BACK_BUT))
-//            {
-//                m_ArmPist.set(false);
-//            }
-//        }
+        if (m_XButtonPressed)
+        {
+            if (XButTog)
+            {
+                m_ArmPist.set(true); //Firing arm's piston 
+                XButTog = false; //Toggling X button
+            }
+            else
+            {
+                XButTog = true; //Toggling X button
+            }
+        m_XButtonWasDown = true; //X button WAS down
+        }
+        else
+        {
+            m_XButtonWasDown = false; //X button WASN'T down
+        }
+
+        if (m_BackButtonPressed) //Checking secondary Back button
+        {
+            if (BackButTog)
+            {
+                BackButTog = false; //Toggling Back button
+            }
+            else
+            {
+                BackButTog = true; //Toggling Back button
+            }
+        m_BackButtonWasDown = true; //Back button WAS down
+        }
+        else
+        {
+            m_BackButtonWasDown = false; //Back button WASN'T down
+        }
+        
+        if (m_XButtonDown && m_BackButtonDown)
+        {
+             m_ArmPist.set(false); //Retracting arm's piston
+        }
         //X for extend toggle, left analog stick for up and down
     }
     
@@ -202,14 +230,14 @@ public class Robot_Tesla_2013 extends SimpleRobot
         {
             if (!m_BButtonWasDown)
             {
-                if (BButTog == 1)
+                if (BButTog)
                 {
-                    BButTog = 0; //Toggling B button
+                    BButTog = false; //Toggling B button
                     SetSpin = 0; //Stopping spin
                 }
                 else
                 {
-                    BButTog = 1; //Toggling B button
+                    BButTog = true; //Toggling B button
                     SetSpin = 1; //Spinning full power
                 }
                 m_FrisbeeMotor.set(SetSpin*-1); //Seting spin
@@ -220,6 +248,7 @@ public class Robot_Tesla_2013 extends SimpleRobot
         {
             m_BButtonWasDown = false; //B button WASN'T down
         }
+        
         if (TrigDown < 0) //If right trigger is down
         {
             m_FrisbeePist.set(true); //Fire frisbee piston
