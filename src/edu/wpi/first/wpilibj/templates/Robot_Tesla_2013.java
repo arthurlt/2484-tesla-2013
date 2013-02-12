@@ -105,6 +105,21 @@ public class Robot_Tesla_2013 extends SimpleRobot
     boolean m_BButPressed;
     boolean m_TrigRightPressed;
     
+    //Strings
+    String ArmBegin     = "Arm is in ";
+    String ArmBotString = "";
+    String ArmTopString = "";
+    
+    String HooksBegin   = "Hooks are neutral";
+    String ArmOutString = "";
+    String ArmInString  = "";
+    
+    String FrisbeeBegin = "Press B to spin-up";
+    String SpunUpString = "";
+    String NoSpinString = "";
+    
+    String ShotsBegin   = "0 shots fired";
+    String ShotsString  = " shots fired";
     protected void robotInit() 
     {
         m_LeftDriveMotor = new Victor(SLOT, LEFT_MOTOR_CHANNEL); //cRIO Slot,Channel
@@ -207,7 +222,7 @@ public class Robot_Tesla_2013 extends SimpleRobot
             if (m_ArmBot.get()) //..and it hits the bottom..
             {
                 armDir = 0; //..stop
-                m_LCD.println(Line.kUser2, LCDCol, "Hooks hit bottom ");
+                m_LCD.println(Line.kUser2, LCDCol, ArmBotString);
             }
         }
         else
@@ -215,7 +230,7 @@ public class Robot_Tesla_2013 extends SimpleRobot
             if (m_ArmTop.get()) //..and it hits the top..
             {
                 armDir = 0; //..stop
-                m_LCD.println(Line.kUser2, LCDCol, "Hooks hit top    ");
+                m_LCD.println(Line.kUser2, LCDCol, ArmTopString);
             }
         }
         m_ArmMotor.set(armDir);
@@ -226,12 +241,12 @@ public class Robot_Tesla_2013 extends SimpleRobot
             {
                 m_ArmPist.set(true); //Firing arm's piston 
                 m_ArmPistonIn = false; //
-                m_LCD.println(Line.kUser1, LCDCol, "Arm is out");
+                m_LCD.println(Line.kUser1, LCDCol, ArmOutString);
             }
             else
             {
                 m_ArmPistonIn = true; //
-                m_LCD.println(Line.kUser1, LCDCol, "Arm is in ");
+                m_LCD.println(Line.kUser1, LCDCol, ArmInString);
             }
         }
 
@@ -267,13 +282,13 @@ public class Robot_Tesla_2013 extends SimpleRobot
             {
                 m_FrisbeeMotorSpin = false; //
                 SetSpin = 0; //Stopping spin
-                m_LCD.println(Line.kUser4, LCDCol, "Press B to spin-up");
+                m_LCD.println(Line.kUser4, LCDCol, SpunUpString);
             }
             else
             {
                 m_FrisbeeMotorSpin = true; //Toggling B button
                 SetSpin = 1; //Spinning full power
-                m_LCD.println(Line.kUser4, LCDCol, "Ready to fire!    ");
+                m_LCD.println(Line.kUser4, LCDCol, NoSpinString);
             }
         m_FrisbeeMotor.set(SetSpin*-1); //Seting spin
         }
@@ -282,7 +297,7 @@ public class Robot_Tesla_2013 extends SimpleRobot
         {
             m_FrisbeePist.set(true);
             ShotsFired++;
-            m_LCD.println(Line.kUser5, LCDCol, ShotsFired + " shots fired");
+            m_LCD.println(Line.kUser5, LCDCol, ShotsFired + ShotsString);
         }
         else
         {
@@ -305,11 +320,10 @@ public class Robot_Tesla_2013 extends SimpleRobot
     {
         getWatchdog().setEnabled(true);
         getWatchdog().setExpiration(2);
-        m_LCD.println(Line.kUser1, LCDCol, "Arm is in ");
-        m_LCD.println(Line.kUser2, LCDCol, "Hooks are neutral");
-        m_LCD.println(Line.kUser2, LCDCol, "Hooks hit bottom");
-        m_LCD.println(Line.kUser4, LCDCol, "Press B to spin-up");
-        m_LCD.println(Line.kUser5, LCDCol, "0 shots fired");
+        m_LCD.println(Line.kUser1, LCDCol, ArmBegin);
+        m_LCD.println(Line.kUser2, LCDCol, HooksBegin);
+        m_LCD.println(Line.kUser4, LCDCol, FrisbeeBegin);
+        m_LCD.println(Line.kUser5, LCDCol, ShotsBegin);
         while (isOperatorControl() && isEnabled()) // loop during enabled teleop mode
             {     
             readButtons();
