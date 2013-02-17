@@ -1,6 +1,0 @@
-MIDlet-Name: Robot_Tesla_2013
-MIDlet-Version: 1.0.0
-MIDlet-Vendor: FIRST
-MIDlet-1: Robot_Tesla_2013, , edu.wpi.first.wpilibj.templates.Robot_Tesla_2013
-MicroEdition-Profile: IMP-1.0
-MicroEdition-Configuration: CLDC-1.1
