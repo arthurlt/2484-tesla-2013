@@ -429,7 +429,7 @@ public class Robot_Tesla_2013 extends SimpleRobot
             frisbee(); //Call frisbee thrower function
             arm(); //Call arm function
             limitSwitch();
-            m_Shooter.Update();
+            m_Shooter.Update(); //Updated the shooter state, [BROKEN] causes crash
             m_LCD.updateLCD(); //Updating the LCD
             getWatchdog().feed(); //Feed the dog
             Timer.delay(0.005); //Delay loop

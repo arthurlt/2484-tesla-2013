@@ -135,16 +135,16 @@ public class Shooter
         ChangeState(SHOOTER_OFF);
     }
     
-    private static final int SHOOTER_UNKNOWN = 0;
-    private static final int SHOOTER_OFF = 1;           // Piston out, motor off,   			possible next state
+    private static final int SHOOTER_UNKNOWN    = 0;
+    private static final int SHOOTER_OFF        = 1;           // Piston out, motor off,   			possible next state
     private static final int SHOOTER_TURNING_ON = 2;	// Piston out, motor just turned on
-    private static final int SHOOTER_ON = 3;		// Piston out, motor at full speed		possible next state
-    private static final int SHOOTER_FIRE = 4;		// Piston moving in, motor at full speed	possible next state
-    private static final int SHOOTER_RESETTING = 5;	// Piston moving out, motor at full 
+    private static final int SHOOTER_ON         = 3;		// Piston out, motor at full speed		possible next state
+    private static final int SHOOTER_FIRE       = 4;		// Piston moving in, motor at full speed	possible next state
+    private static final int SHOOTER_RESETTING  = 5;	// Piston moving out, motor at full 
     private static final float SHOOTER_MOTOR_SPEED = 1;
 
     private int                 m_current_state = SHOOTER_UNKNOWN;
-    private int                 m_next_state = SHOOTER_UNKNOWN;
+    private int                 m_next_state    = SHOOTER_UNKNOWN;
     private SpeedController	m_speed_controller;
     private Piston		m_piston;
     private Timer               m_transition_timer;

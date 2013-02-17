@@ -56,11 +56,11 @@ public final class Piston
     
     private void Initialize(Solenoid in_sol, Solenoid out_sol, boolean initially_out, boolean invert, float transition_time)
     {
-        m_solenoid = in_sol;
-        m_out_solenoid = out_sol;
-        m_invert = invert;
-        m_transition_time = transition_time;
-        m_transition_timer = new Timer();
+        m_solenoid      = in_sol;
+        m_out_solenoid  = out_sol;
+        m_invert        = invert;
+        m_transition_time   = transition_time;
+        m_transition_timer  = new Timer();
         SetState(initially_out);
     }
 
