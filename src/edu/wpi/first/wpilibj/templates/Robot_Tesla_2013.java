@@ -162,6 +162,36 @@ public class Robot_Tesla_2013 extends SimpleRobot
         m_LCD = DriverStationLCD.getInstance();
     }  
     
+    public void reset()
+    {
+        //Pistons
+        if (m_ArmPistonOut)
+        {
+            m_ArmSolIn.set(true);
+            m_ArmSolOut.set(false);
+        }
+        
+        //Variables
+        m_TrigRightWasDown  = false;
+        m_ArmPistonOut      = false;
+        m_XButWasDown       = false;
+        m_ArmPistonBringIn  = false;
+        m_BackButWasDown    = false;
+        m_XBackButWasDown   = false;
+
+        m_FrisbeeMotorSpin  = false;
+        m_SetSpin           = 0;
+        m_BButWasDown       = false;
+        m_FrisbeeFired      = false;
+        m_ShotsFired        = 0;
+        
+        //Strings
+        m_LCD.println(Line.kUser1, LCDCol, ArmPosBegin);
+        m_LCD.println(Line.kUser2, LCDCol, ArmDirBegin);
+        m_LCD.println(Line.kUser4, LCDCol, FrisbeeBegin);
+        m_LCD.println(Line.kUser5, LCDCol, ShotsBegin);
+    }
+    
     public void readInputs()
     {
         boolean XButDown = m_Secondary.getRawButton(X_BUT);
@@ -342,7 +372,7 @@ public class Robot_Tesla_2013 extends SimpleRobot
                 //m_SetSpin = 1; //Spinning full power
                 m_LCD.println(Line.kUser4, LCDCol, SpunUpString);
             }
-        m_FrisbeeMotor.set(m_SetSpin*-1); //Seting spin
+        //m_FrisbeeMotor.set(m_SetSpin*-1); //Seting spin
         }
         
         if (m_TrigRightPressed)
@@ -390,11 +420,8 @@ public class Robot_Tesla_2013 extends SimpleRobot
     public void operatorControl() 
     {
         getWatchdog().setEnabled(true);
-        getWatchdog().setExpiration(2); //Use this to change Watchdog timout, time in seconds
-        m_LCD.println(Line.kUser1, LCDCol, ArmPosBegin);
-        m_LCD.println(Line.kUser2, LCDCol, ArmDirBegin);
-        m_LCD.println(Line.kUser4, LCDCol, FrisbeeBegin);
-        m_LCD.println(Line.kUser5, LCDCol, ShotsBegin);
+        //getWatchdog().setExpiration(2); //Use this to change Watchdog timout, time in seconds
+        reset();
         while (isOperatorControl() && isEnabled()) // loop during enabled teleop mode
             {     
             readInputs();
