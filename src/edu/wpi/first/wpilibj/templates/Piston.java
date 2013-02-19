@@ -5,7 +5,6 @@
 package edu.wpi.first.wpilibj.templates;
 
 import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.Timer;
 
 /**
  *
@@ -40,8 +39,6 @@ public final class Piston
         {
             m_out_solenoid.set(!(set_out ^ m_invert));
         }
-        m_transition_timer.start();
-        m_transition_timer.reset();
     }
 
     public boolean GetState()
@@ -49,18 +46,12 @@ public final class Piston
         return m_solenoid.get() ^ m_invert;
     }
 	
-    public boolean IsMoving()
-    {
-        return m_transition_timer.get() < m_transition_time;
-    }
-    
     private void Initialize(Solenoid in_sol, Solenoid out_sol, boolean initially_out, boolean invert, float transition_time)
     {
         m_solenoid      = in_sol;
         m_out_solenoid  = out_sol;
         m_invert        = invert;
         m_transition_time   = transition_time;
-        m_transition_timer  = new Timer();
         SetState(initially_out);
     }
 
@@ -68,5 +59,4 @@ public final class Piston
     private Solenoid    m_out_solenoid;
     private float       m_transition_time;
     private boolean     m_invert;
-    private Timer       m_transition_timer;
 };

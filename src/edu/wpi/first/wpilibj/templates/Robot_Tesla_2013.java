@@ -68,11 +68,13 @@ public class Robot_Tesla_2013 extends SimpleRobot
     private static final int SOL_ARM_OUT    = 4;
     private static final int SOL_FRISBEE_IN = 2;
     private static final int SOL_FRISBEE_OUT = 1;
+    private static final int SOL_LIGHTS     = 5;
     
     Solenoid m_ArmSolIn;
     Solenoid m_ArmSolOut;
     Solenoid m_FrisbeeSolIn;
     Solenoid m_FrisbeeSolOut;
+    Solenoid m_Lights;
     
     Piston m_ArmPist;
     Piston m_FrisbeePist;
@@ -97,6 +99,8 @@ public class Robot_Tesla_2013 extends SimpleRobot
     boolean m_BackButWasDown    = false;
     boolean m_XBackButWasDown   = false;
     
+    boolean m_YButWasDown       = false;
+    
     boolean m_FrisbeeMotorSpin  = false;
     int m_SetSpin               = 0;
     boolean m_BButWasDown       = false;
@@ -113,6 +117,7 @@ public class Robot_Tesla_2013 extends SimpleRobot
     boolean m_XButPressed;
     boolean m_BackButPressed;
     boolean m_XBackButPressed;
+    boolean m_YButPressed;
     boolean m_BButPressed;
     boolean m_TrigRightPressed;
     
@@ -150,9 +155,10 @@ public class Robot_Tesla_2013 extends SimpleRobot
         m_ArmSolOut     = new Solenoid(SOL_ARM_OUT);
         m_FrisbeeSolIn  = new Solenoid(SOL_FRISBEE_IN);
         m_FrisbeeSolOut = new Solenoid(SOL_FRISBEE_OUT);
+        m_Lights        = new Solenoid(SOL_LIGHTS);
         
-        m_ArmPist       = new Piston(m_ArmSolIn, m_ArmSolOut, false, false, 3);
-        m_FrisbeePist   = new Piston(m_FrisbeeSolIn, m_FrisbeeSolOut, true, false, 1);
+        m_ArmPist       = new Piston(m_ArmSolIn, m_ArmSolOut, false, true, 3);
+        m_FrisbeePist   = new Piston(m_FrisbeeSolIn, m_FrisbeeSolOut, true, false, 0.5f);
         
         m_Shooter = new Shooter(m_FrisbeePist, m_FrisbeeMotor, 1);
         
@@ -160,14 +166,18 @@ public class Robot_Tesla_2013 extends SimpleRobot
         m_ArmBot = new DigitalInput(ARMBOT);
         
         m_LCD = DriverStationLCD.getInstance();
+        
+        
     }  
-    
+    /**
+     *  Call this to reset the robot.
+     */
     public void reset()
     {
         //Pistons
-        if (m_ArmPistonOut)
+        if (m_ArmPistonOut) //If Arm is out..
         {
-            m_ArmSolIn.set(true);
+            m_ArmSolIn.set(true); //pull it back in
             m_ArmSolOut.set(false);
         }
         
@@ -178,6 +188,8 @@ public class Robot_Tesla_2013 extends SimpleRobot
         m_ArmPistonBringIn  = false;
         m_BackButWasDown    = false;
         m_XBackButWasDown   = false;
+        
+        m_YButWasDown       = false;
 
         m_FrisbeeMotorSpin  = false;
         m_SetSpin           = 0;
@@ -190,8 +202,14 @@ public class Robot_Tesla_2013 extends SimpleRobot
         m_LCD.println(Line.kUser2, LCDCol, ArmDirBegin);
         m_LCD.println(Line.kUser4, LCDCol, FrisbeeBegin);
         m_LCD.println(Line.kUser5, LCDCol, ShotsBegin);
+        m_LCD.println(Line.kUser6, LCDCol, "                   ");
+        
+        m_LCD.updateLCD();
     }
     
+    /**
+     *  Call this to use read the controllers' inputs.
+     */
     public void readInputs()
     {
         boolean XButDown = m_Secondary.getRawButton(X_BUT);
@@ -205,6 +223,10 @@ public class Robot_Tesla_2013 extends SimpleRobot
         boolean XBackButDown = XButDown && BackButDown;
         m_XBackButPressed = XBackButDown && !m_XBackButWasDown;
         m_XBackButWasDown = XBackButDown;
+        
+        boolean YButDown = m_Secondary.getRawButton(Y_BUT);
+        m_YButPressed = YButDown && !m_YButWasDown;
+        m_YButWasDown = YButDown;
         
         boolean BButDown = m_Secondary.getRawButton(B_BUT);
         m_BButPressed = BButDown && !m_BButWasDown;
@@ -247,7 +269,7 @@ public class Robot_Tesla_2013 extends SimpleRobot
     }
     
     /**
-     * Fixes input axis that isn't centered
+     * Fixes input axis that isn't centered.
      * 
      * @param axis Input your RawAxis
      * @return Returns fixed axis
@@ -271,31 +293,24 @@ public class Robot_Tesla_2013 extends SimpleRobot
     }
     
     /**
-     * This function is called for the drive system.
+     * Call this function to use the drive system.
      */
     public void drive()
     {
-        /*
-         *  Left analog stick moves left side of robot's drive
-         *  Right analog stick moves right side of robot's drive
-         */
-        m_RobotDrive.tankDrive(LeftDriveFinal*-1, RightDriveFinal*-1, false);
+        m_RobotDrive.tankDrive(LeftDriveFinal*-1, RightDriveFinal*-1, true);
         m_LCD.println(Line.kUser3, LCDCol, "Left: " + LeftDriveFinal + "  Right: " + RightDriveFinal);
         //m_Driver.getRawAxis()*-1 to invert
         //"Left: "LeftDriveFinal + " Right: "RightDriveFinal
-        
     }
     
+    /**
+     *  Call this to use the climbing arm.
+     */
     public void arm()
     {
-        /*
-         *  X button fires arm's piston
-         *  Select+X retracts arm's piston
-         *  Left analog stick moves arm's hooks up and down
-         */
         double armDir = motorFix(m_Secondary.getRawAxis(LEFT_Y)); //Reading secondary left Y axis
         
-        if (armDir < 0) //If going down..
+        if (armDir > 0) //If going down..
         { 
             if (m_ArmBot.get()) //..and it hits the bottom..
             {
@@ -315,13 +330,18 @@ public class Robot_Tesla_2013 extends SimpleRobot
         
         if (m_XButPressed)
         {
-            if (!m_ArmPistonOut)
+            if (!m_ArmPist.GetState())
             {
-                m_ArmSolIn.set(false);
-                m_ArmSolOut.set(true); //Moving arm out
-                m_ArmPistonOut = true;
+                m_ArmPist.SetState(Piston.PISTON_OUT);
                 m_LCD.println(Line.kUser1, LCDCol, ArmOutString);
             }
+//            if (!m_ArmPistonOut)
+//            {
+//                m_ArmSolIn.set(false);
+//                m_ArmSolOut.set(true); //Moving arm out
+//                m_ArmPistonOut = true;
+//                m_LCD.println(Line.kUser1, LCDCol, ArmOutString);
+//            }
         }
 
         if (m_BackButPressed) //Checking secondary Back button
@@ -338,24 +358,26 @@ public class Robot_Tesla_2013 extends SimpleRobot
         
         if (m_XBackButPressed)
         {
-            if (m_ArmPistonOut)
+            if (m_ArmPist.GetState())
             {
-              m_ArmSolIn.set(true);
-              m_ArmSolOut.set(false); //Retracting arm
-              m_ArmPistonOut = false; 
-              m_LCD.println(Line.kUser1, LCDCol, ArmInString);
+                m_ArmPist.SetState(Piston.PISTON_IN);
+                m_LCD.println(Line.kUser1, LCDCol, ArmInString);
             }
+//            if (m_ArmPistonOut)
+//            {
+//              m_ArmSolIn.set(true);
+//              m_ArmSolOut.set(false); //Retracting arm
+//              m_ArmPistonOut = false; 
+//              m_LCD.println(Line.kUser1, LCDCol, ArmInString);
+//            }
         }
-        //X for extend toggle, left analog stick for up and down
     }
     
+    /**
+     *  Call this to use the Frisbee shooter.
+     */
     public void frisbee()
-    {
-        /*
-         *  B button toggles frisbee firing motor
-         *  Right trigger fires frisbee firing piston
-         */
-        
+    {     
         if (m_BButPressed)
         {
             if (m_FrisbeeMotorSpin)
@@ -363,21 +385,30 @@ public class Robot_Tesla_2013 extends SimpleRobot
                 m_FrisbeeMotorSpin = false;
                 m_Shooter.TurnOff();
                 //m_SetSpin = 0; //Stopping spin
-                m_LCD.println(Line.kUser4, LCDCol, NoSpinString);
             }
             else
             {
                 m_FrisbeeMotorSpin = true;
                 m_Shooter.TurnOn();
                 //m_SetSpin = 1; //Spinning full power
-                m_LCD.println(Line.kUser4, LCDCol, SpunUpString);
             }
         //m_FrisbeeMotor.set(m_SetSpin*-1); //Seting spin
+        }
+        
+        if (m_Shooter.GetState() < Shooter.SHOOTER_ON)
+        {
+            m_LCD.println(Line.kUser4, LCDCol, NoSpinString);
+        }
+        else 
+        {
+            m_LCD.println(Line.kUser4, LCDCol, SpunUpString);
         }
         
         if (m_TrigRightPressed)
         {
             m_Shooter.Fire();
+            m_ShotsFired++;
+            m_LCD.println(Line.kUser5, LCDCol, m_ShotsFired + ShotsString);
 //            if (!m_FrisbeeFired)
 //            {
 //                m_FrisbeeFired = true;
@@ -395,22 +426,37 @@ public class Robot_Tesla_2013 extends SimpleRobot
         }
     }
     
-    /*
-     *  Testing Limit Switches
+    /**
+     *  Call this to test the Limit Switches.
      */
     public void limitSwitch()
     {   
         if (m_ArmBot.get())
         {
-            m_LCD.println(Line.kUser6, LCDCol, "Bottom Limit Switch ");
+            m_LCD.println(Line.kUser6, LCDCol, "Bottom Limit Switch");
         }
         else if (m_ArmTop.get())
         {
-            m_LCD.println(Line.kUser6, LCDCol, "Top Limit Switch Hit");
+            m_LCD.println(Line.kUser6, LCDCol, "Top Limit Switch   ");
         }
         else
         {
-            m_LCD.println(Line.kUser6, LCDCol, "                    ");
+            m_LCD.println(Line.kUser6, LCDCol, "                   ");
+        }
+    }
+    
+    public void lights()
+    {
+        if (m_YButPressed)
+        {
+            if (m_Lights.get())
+            {
+                m_Lights.set(false);
+            }
+            else
+            {
+                m_Lights.set(true);
+            }
         }
     }
     
@@ -429,6 +475,7 @@ public class Robot_Tesla_2013 extends SimpleRobot
             frisbee(); //Call frisbee thrower function
             arm(); //Call arm function
             limitSwitch();
+            lights();
             m_Shooter.Update(); //Updated the shooter state, [BROKEN] causes crash
             m_LCD.updateLCD(); //Updating the LCD
             getWatchdog().feed(); //Feed the dog
@@ -441,9 +488,21 @@ public class Robot_Tesla_2013 extends SimpleRobot
      */
     public void autonomous() 
     {
+        double LeftAuto     = -.5;
+        double RightAuto    = -.5;
+        int DriveTimer      = 4;
+        int AutoShotsFired  = 0;
+
         getWatchdog().setEnabled(false);
-        m_RobotDrive.tankDrive(-.5, -.5, false);
-        
+        m_RobotDrive.tankDrive(LeftAuto, RightAuto, false);
+        Timer.delay(DriveTimer);
+        m_RobotDrive.tankDrive(0, 0, false);
+        m_Shooter.TurnOn();
+        while (AutoShotsFired <= 3)
+        {
+            m_Shooter.Fire();
+            AutoShotsFired++;
+        }
     }
     
     /**
@@ -454,9 +513,12 @@ public class Robot_Tesla_2013 extends SimpleRobot
     
     }
     
+    /**
+     * This function is called once each time the robot is disabled.
+     */
     public void disabled()
     {
-        
+        reset();
     }
    
 }
