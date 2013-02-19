@@ -7,8 +7,8 @@
 
 package edu.wpi.first.wpilibj.templates;
 
+//import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStationLCD;
 import edu.wpi.first.wpilibj.DriverStationLCD.Line;
 import edu.wpi.first.wpilibj.Joystick;
@@ -31,12 +31,12 @@ public class Robot_Tesla_2013 extends SimpleRobot
     private static final int SLOT = 1; //Only a single slot
     private static final int LEFT_MOTOR_CHANNEL     = 1;
     private static final int RIGHT_MOTOR_CHANNEL    = 2;
-    private static final int ARM_MOTOR              = 3;
+    //private static final int ARM_MOTOR              = 3;
     private static final int FRISBEE_MOTOR          = 4;
     
     SpeedController m_LeftDriveMotor;
     SpeedController m_RightDriveMotor;
-    SpeedController m_ArmMotor;
+    //SpeedController m_ArmMotor;
     SpeedController m_FrisbeeMotor;
     
     //Xbox Controllers
@@ -64,40 +64,40 @@ public class Robot_Tesla_2013 extends SimpleRobot
     
     //Pneumatics
     Compressor m_Compressor;
-    private static final int SOL_ARM_IN     = 3;
-    private static final int SOL_ARM_OUT    = 4;
+    //private static final int SOL_ARM_IN     = 3;
+    //private static final int SOL_ARM_OUT    = 4;
     private static final int SOL_FRISBEE_IN = 2;
     private static final int SOL_FRISBEE_OUT = 1;
     private static final int SOL_LIGHTS     = 5;
     
-    Solenoid m_ArmSolIn;
-    Solenoid m_ArmSolOut;
+    //Solenoid m_ArmSolIn;
+    //Solenoid m_ArmSolOut;
     Solenoid m_FrisbeeSolIn;
     Solenoid m_FrisbeeSolOut;
     Solenoid m_Lights;
     
-    Piston m_ArmPist;
+    //Piston m_ArmPist;
     Piston m_FrisbeePist;
     
     Shooter m_Shooter;
 
     //Limit Switches
-    private static final int ARMTOP = 2;
-    private static final int ARMBOT = 1;
+    //private static final int ARMTOP = 2;
+    //private static final int ARMBOT = 1;
     
-    DigitalInput m_ArmTop;
-    DigitalInput m_ArmBot;
+    //DigitalInput m_ArmTop;
+    //DigitalInput m_ArmBot;
 
     //Driver Station
     DriverStationLCD m_LCD; 
     
     //Variables
     boolean m_TrigRightWasDown  = false;
-    boolean m_ArmPistonOut      = false;
-    boolean m_XButWasDown       = false;
-    boolean m_ArmPistonBringIn  = false;
-    boolean m_BackButWasDown    = false;
-    boolean m_XBackButWasDown   = false;
+    //boolean m_ArmPistonOut      = false;
+    //boolean m_XButWasDown       = false;
+    //boolean m_ArmPistonBringIn  = false;
+    //boolean m_BackButWasDown    = false;
+    //boolean m_XBackButWasDown   = false;
     
     boolean m_YButWasDown       = false;
     
@@ -114,21 +114,21 @@ public class Robot_Tesla_2013 extends SimpleRobot
     double RightDriveFinal;
     
     //Buttons
-    boolean m_XButPressed;
-    boolean m_BackButPressed;
-    boolean m_XBackButPressed;
+    //boolean m_XButPressed;
+    //boolean m_BackButPressed;
+    //boolean m_XBackButPressed;
     boolean m_YButPressed;
     boolean m_BButPressed;
     boolean m_TrigRightPressed;
     
     //Strings
-    String ArmDirBegin  = "Hooks are set. ";
-    String ArmBotString = "Reached bottom.";
-    String ArmTopString = "Reached top.   ";
+    //String ArmDirBegin  = "Hooks are set. ";
+    //String ArmBotString = "Reached bottom.";
+    //String ArmTopString = "Reached top.   ";
     
-    String ArmPosBegin  = "Arm is in. ";
-    String ArmOutString = "Arm is out.";
-    String ArmInString  = "Arm is in. ";
+    //String ArmPosBegin  = "Arm is in. ";
+    //String ArmOutString = "Arm is out.";
+    //String ArmInString  = "Arm is in. ";
     
     String FrisbeeBegin = "Press B to spin-up.";
     String SpunUpString = "Ready to fire!     ";
@@ -141,7 +141,7 @@ public class Robot_Tesla_2013 extends SimpleRobot
     {
         m_LeftDriveMotor    = new Victor(SLOT, LEFT_MOTOR_CHANNEL); //cRIO Slot,Channel
         m_RightDriveMotor   = new Victor(SLOT, RIGHT_MOTOR_CHANNEL);
-        m_ArmMotor          = new Victor(SLOT, ARM_MOTOR);
+        //m_ArmMotor          = new Victor(SLOT, ARM_MOTOR);
         m_FrisbeeMotor      = new Victor(SLOT, FRISBEE_MOTOR);
         
         m_Driver        = new Joystick(1); //USB Port
@@ -151,19 +151,19 @@ public class Robot_Tesla_2013 extends SimpleRobot
         m_Compressor = new Compressor(14, 1); //Pressure switch channel,Relay channel
         m_Compressor.start(); 
         
-        m_ArmSolIn      = new Solenoid(SOL_ARM_IN);
-        m_ArmSolOut     = new Solenoid(SOL_ARM_OUT);
+        //m_ArmSolIn      = new Solenoid(SOL_ARM_IN);
+        //m_ArmSolOut     = new Solenoid(SOL_ARM_OUT);
         m_FrisbeeSolIn  = new Solenoid(SOL_FRISBEE_IN);
         m_FrisbeeSolOut = new Solenoid(SOL_FRISBEE_OUT);
         m_Lights        = new Solenoid(SOL_LIGHTS);
         
-        m_ArmPist       = new Piston(m_ArmSolIn, m_ArmSolOut, false, true, 3);
+        //m_ArmPist       = new Piston(m_ArmSolIn, m_ArmSolOut, false, true, 3);
         m_FrisbeePist   = new Piston(m_FrisbeeSolIn, m_FrisbeeSolOut, true, false, 0.5f);
         
         m_Shooter = new Shooter(m_FrisbeePist, m_FrisbeeMotor, 1);
         
-        m_ArmTop = new DigitalInput(ARMTOP); //Channel
-        m_ArmBot = new DigitalInput(ARMBOT);
+        //m_ArmTop = new DigitalInput(ARMTOP); //Channel
+        //m_ArmBot = new DigitalInput(ARMBOT);
         
         m_LCD = DriverStationLCD.getInstance();
         
@@ -175,19 +175,19 @@ public class Robot_Tesla_2013 extends SimpleRobot
     public void reset()
     {
         //Pistons
-        if (m_ArmPistonOut) //If Arm is out..
-        {
-            m_ArmSolIn.set(true); //pull it back in
-            m_ArmSolOut.set(false);
-        }
+        //if (m_ArmPistonOut) //If Arm is out..
+        //{
+        //    m_ArmSolIn.set(true); //pull it back in
+        //    m_ArmSolOut.set(false);
+        //}
         
         //Variables
         m_TrigRightWasDown  = false;
-        m_ArmPistonOut      = false;
-        m_XButWasDown       = false;
-        m_ArmPistonBringIn  = false;
-        m_BackButWasDown    = false;
-        m_XBackButWasDown   = false;
+        //m_ArmPistonOut      = false;
+        //m_XButWasDown       = false;
+        //m_ArmPistonBringIn  = false;
+        //m_BackButWasDown    = false;
+        //m_XBackButWasDown   = false;
         
         m_YButWasDown       = false;
 
@@ -198,8 +198,8 @@ public class Robot_Tesla_2013 extends SimpleRobot
         m_ShotsFired        = 0;
         
         //Strings
-        m_LCD.println(Line.kUser1, LCDCol, ArmPosBegin);
-        m_LCD.println(Line.kUser2, LCDCol, ArmDirBegin);
+        //m_LCD.println(Line.kUser1, LCDCol, ArmPosBegin);
+        //m_LCD.println(Line.kUser2, LCDCol, ArmDirBegin);
         m_LCD.println(Line.kUser4, LCDCol, FrisbeeBegin);
         m_LCD.println(Line.kUser5, LCDCol, ShotsBegin);
         m_LCD.println(Line.kUser6, LCDCol, "                   ");
@@ -212,17 +212,17 @@ public class Robot_Tesla_2013 extends SimpleRobot
      */
     public void readInputs()
     {
-        boolean XButDown = m_Secondary.getRawButton(X_BUT);
-        m_XButPressed = XButDown && !m_XButWasDown;
-        m_XButWasDown = XButDown;
+        //boolean XButDown = m_Secondary.getRawButton(X_BUT);
+        //m_XButPressed = XButDown && !m_XButWasDown;
+        //m_XButWasDown = XButDown;
         
-        boolean BackButDown = m_Secondary.getRawButton(BACK_BUT);
-        m_BackButPressed = BackButDown && !m_BackButWasDown;
-        m_BackButWasDown = BackButDown;
+        //boolean BackButDown = m_Secondary.getRawButton(BACK_BUT);
+        //m_BackButPressed = BackButDown && !m_BackButWasDown;
+        //m_BackButWasDown = BackButDown;
         
-        boolean XBackButDown = XButDown && BackButDown;
-        m_XBackButPressed = XBackButDown && !m_XBackButWasDown;
-        m_XBackButWasDown = XBackButDown;
+        //boolean XBackButDown = XButDown && BackButDown;
+        //m_XBackButPressed = XBackButDown && !m_XBackButWasDown;
+        //m_XBackButWasDown = XBackButDown;
         
         boolean YButDown = m_Secondary.getRawButton(Y_BUT);
         m_YButPressed = YButDown && !m_YButWasDown;
@@ -303,75 +303,75 @@ public class Robot_Tesla_2013 extends SimpleRobot
         //"Left: "LeftDriveFinal + " Right: "RightDriveFinal
     }
     
-    /**
-     *  Call this to use the climbing arm.
-     */
-    public void arm()
-    {
-        double armDir = motorFix(m_Secondary.getRawAxis(LEFT_Y)); //Reading secondary left Y axis
-        
-        if (armDir > 0) //If going down..
-        { 
-            if (m_ArmBot.get()) //..and it hits the bottom..
-            {
-                armDir = 0; //..stop
-                m_LCD.println(Line.kUser2, LCDCol, ArmBotString);
-            }
-        }
-        else
-        { //Or, if going up..
-            if (m_ArmTop.get()) //..and it hits the top..
-            {
-                armDir = 0; //..stop
-                m_LCD.println(Line.kUser2, LCDCol, ArmTopString);
-            }
-        }
-        m_ArmMotor.set(armDir);
-        
-        if (m_XButPressed)
-        {
-            if (!m_ArmPist.GetState())
-            {
-                m_ArmPist.SetState(Piston.PISTON_OUT);
-                m_LCD.println(Line.kUser1, LCDCol, ArmOutString);
-            }
-//            if (!m_ArmPistonOut)
+//    /**
+//     *  Call this to use the climbing arm.
+//     */
+//    public void arm()
+//    {
+//        double armDir = motorFix(m_Secondary.getRawAxis(LEFT_Y)); //Reading secondary left Y axis
+//        
+//        if (armDir > 0) //If going down..
+//        { 
+//            if (m_ArmBot.get()) //..and it hits the bottom..
 //            {
-//                m_ArmSolIn.set(false);
-//                m_ArmSolOut.set(true); //Moving arm out
-//                m_ArmPistonOut = true;
+//                armDir = 0; //..stop
+//                m_LCD.println(Line.kUser2, LCDCol, ArmBotString);
+//            }
+//        }
+//        else
+//        { //Or, if going up..
+//            if (m_ArmTop.get()) //..and it hits the top..
+//            {
+//                armDir = 0; //..stop
+//                m_LCD.println(Line.kUser2, LCDCol, ArmTopString);
+//            }
+//        }
+//        m_ArmMotor.set(armDir);
+//        
+//        if (m_XButPressed)
+//        {
+//            if (!m_ArmPist.GetState())
+//            {
+//                m_ArmPist.SetState(Piston.PISTON_OUT);
 //                m_LCD.println(Line.kUser1, LCDCol, ArmOutString);
 //            }
-        }
-
-        if (m_BackButPressed) //Checking secondary Back button
-        {
-            if (m_ArmPistonBringIn)
-            {
-                m_ArmPistonBringIn = false;
-            }
-            else
-            {
-                m_ArmPistonBringIn = true;
-            }
-        }
-        
-        if (m_XBackButPressed)
-        {
-            if (m_ArmPist.GetState())
-            {
-                m_ArmPist.SetState(Piston.PISTON_IN);
-                m_LCD.println(Line.kUser1, LCDCol, ArmInString);
-            }
-//            if (m_ArmPistonOut)
+////            if (!m_ArmPistonOut)
+////            {
+////                m_ArmSolIn.set(false);
+////                m_ArmSolOut.set(true); //Moving arm out
+////                m_ArmPistonOut = true;
+////                m_LCD.println(Line.kUser1, LCDCol, ArmOutString);
+////            }
+//        }
+//
+//        if (m_BackButPressed) //Checking secondary Back button
+//        {
+//            if (m_ArmPistonBringIn)
 //            {
-//              m_ArmSolIn.set(true);
-//              m_ArmSolOut.set(false); //Retracting arm
-//              m_ArmPistonOut = false; 
-//              m_LCD.println(Line.kUser1, LCDCol, ArmInString);
+//                m_ArmPistonBringIn = false;
 //            }
-        }
-    }
+//            else
+//            {
+//                m_ArmPistonBringIn = true;
+//            }
+//        }
+//        
+//        if (m_XBackButPressed)
+//        {
+//            if (m_ArmPist.GetState())
+//            {
+//                m_ArmPist.SetState(Piston.PISTON_IN);
+//                m_LCD.println(Line.kUser1, LCDCol, ArmInString);
+//            }
+////            if (m_ArmPistonOut)
+////            {
+////              m_ArmSolIn.set(true);
+////              m_ArmSolOut.set(false); //Retracting arm
+////              m_ArmPistonOut = false; 
+////              m_LCD.println(Line.kUser1, LCDCol, ArmInString);
+////            }
+//        }
+//    }
     
     /**
      *  Call this to use the Frisbee shooter.
@@ -429,21 +429,21 @@ public class Robot_Tesla_2013 extends SimpleRobot
     /**
      *  Call this to test the Limit Switches.
      */
-    public void limitSwitch()
-    {   
-        if (m_ArmBot.get())
-        {
-            m_LCD.println(Line.kUser6, LCDCol, "Bottom Limit Switch");
-        }
-        else if (m_ArmTop.get())
-        {
-            m_LCD.println(Line.kUser6, LCDCol, "Top Limit Switch   ");
-        }
-        else
-        {
-            m_LCD.println(Line.kUser6, LCDCol, "                   ");
-        }
-    }
+//    public void limitSwitch()
+//    {   
+//        if (m_ArmBot.get())
+//        {
+//            m_LCD.println(Line.kUser6, LCDCol, "Bottom Limit Switch");
+//        }
+//        else if (m_ArmTop.get())
+//        {
+//            m_LCD.println(Line.kUser6, LCDCol, "Top Limit Switch   ");
+//        }
+//        else
+//        {
+//            m_LCD.println(Line.kUser6, LCDCol, "                   ");
+//        }
+//    }
     
     public void lights()
     {
@@ -473,8 +473,8 @@ public class Robot_Tesla_2013 extends SimpleRobot
             readInputs();
             drive(); //Call drive function
             frisbee(); //Call frisbee thrower function
-            arm(); //Call arm function
-            limitSwitch();
+            //arm(); //Call arm function
+            //limitSwitch();
             lights();
             m_Shooter.Update(); //Updated the shooter state, [BROKEN] causes crash
             m_LCD.updateLCD(); //Updating the LCD
