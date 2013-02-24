@@ -102,7 +102,7 @@ public class Robot_Tesla_2013 extends SimpleRobot
     boolean m_YButWasDown       = false;
     
     boolean m_FrisbeeMotorSpin  = false;
-    int m_SetSpin               = 0;
+    //int m_SetSpin               = 0;
     boolean m_BButWasDown       = false;
     boolean m_FrisbeeFired      = false;
     int m_ShotsFired            = 0;
@@ -130,9 +130,9 @@ public class Robot_Tesla_2013 extends SimpleRobot
     //String ArmOutString = "Arm is out.";
     //String ArmInString  = "Arm is in. ";
     
-    String FrisbeeBegin = "Press B to spin-up.";
-    String SpunUpString = "Ready to fire!     ";
-    String NoSpinString = "Press B to spin-up.";
+    String FrisbeeBegin = "Fire to spin-up.";
+    String SpunUpString = "Ready to fire!  ";
+    String NoSpinString = "Fire to spin-up.";
     
     String ShotsBegin   = "0 shots fired.  ";
     String ShotsString  =  " shots fired.";
@@ -192,7 +192,7 @@ public class Robot_Tesla_2013 extends SimpleRobot
         m_YButWasDown       = false;
 
         m_FrisbeeMotorSpin  = false;
-        m_SetSpin           = 0;
+        //m_SetSpin           = 0;
         m_BButWasDown       = false;
         m_FrisbeeFired      = false;
         m_ShotsFired        = 0;
@@ -298,7 +298,7 @@ public class Robot_Tesla_2013 extends SimpleRobot
     public void drive()
     {
         m_RobotDrive.tankDrive(LeftDriveFinal*-1, RightDriveFinal*-1, true);
-        m_LCD.println(Line.kUser3, LCDCol, "Left: " + LeftDriveFinal + "  Right: " + RightDriveFinal);
+        //m_LCD.println(Line.kUser3, LCDCol, "Left: " + LeftDriveFinal + "  Right: " + RightDriveFinal);
         //m_Driver.getRawAxis()*-1 to invert
         //"Left: "LeftDriveFinal + " Right: "RightDriveFinal
     }
@@ -389,7 +389,7 @@ public class Robot_Tesla_2013 extends SimpleRobot
             else
             {
                 m_FrisbeeMotorSpin = true;
-                m_Shooter.TurnOn();
+                //m_Shooter.TurnOn();
                 //m_SetSpin = 1; //Spinning full power
             }
         //m_FrisbeeMotor.set(m_SetSpin*-1); //Seting spin
@@ -482,27 +482,50 @@ public class Robot_Tesla_2013 extends SimpleRobot
             Timer.delay(0.005); //Delay loop
             }     
     }
+    public void autoLoop(double LeftAuto, double RightAuto, float Wait)
+    {
+        float TimeLeft      = Wait;
+        float AutoTimer     = 0.005f;
+        
+        while (isAutonomous() && isEnabled() && (TimeLeft >= 0))
+        {
+            autoDrive(LeftAuto, RightAuto); 
+            m_LCD.updateLCD();
+            m_Shooter.Update();
+            Timer.delay(AutoTimer);
+            TimeLeft = TimeLeft - AutoTimer;
+        }
+    }
+        
+    public void autoDrive(double Left, double Right)
+    {
+        m_RobotDrive.tankDrive(Left, Right, false);
+    }
         
     /**
      * This function is called once each time the robot enters autonomous mode.
      */
     public void autonomous() 
     {
-        double LeftAuto     = -.5;
-        double RightAuto    = -.5;
-        int DriveTimer      = 4;
-        int AutoShotsFired  = 0;
-
+        reset();
         getWatchdog().setEnabled(false);
-        m_RobotDrive.tankDrive(LeftAuto, RightAuto, false);
-        Timer.delay(DriveTimer);
-        m_RobotDrive.tankDrive(0, 0, false);
-        m_Shooter.TurnOn();
-        while (AutoShotsFired <= 3)
-        {
-            m_Shooter.Fire();
-            AutoShotsFired++;
-        }
+        
+        m_LCD.println(Line.kUser6, LCDCol, "Driving");
+        autoLoop(.5, .53, 3.0f);
+        m_LCD.println(Line.kUser6, LCDCol, "Firing 1");
+        m_Shooter.Fire();
+        autoLoop(0, 0, 3.0f);
+        m_LCD.println(Line.kUser6, LCDCol, "Firing 2");
+        m_Shooter.Fire();
+        autoLoop(0, 0, 2.0f);
+        m_LCD.println(Line.kUser6, LCDCol, "Firing 3");
+        m_Shooter.Fire();
+        autoLoop(0, 0, 2.0f);
+        m_LCD.println(Line.kUser6, LCDCol, "Turning Off");
+        m_Shooter.TurnOff();
+        autoLoop(0, 0, 0.25f);
+        m_LCD.println(Line.kUser6, LCDCol, "           ");
+
     }
     
     /**
