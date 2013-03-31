@@ -511,16 +511,16 @@ public class Robot_Tesla_2013 extends SimpleRobot
         getWatchdog().setEnabled(false);
         
         m_LCD.println(Line.kUser6, LCDCol, "Driving");
-        autoLoop(.5, .53, 3.0f);
+        autoLoop(-.5, -.6, 1.75f);
         m_LCD.println(Line.kUser6, LCDCol, "Firing 1");
         m_Shooter.Fire();
         autoLoop(0, 0, 3.0f);
         m_LCD.println(Line.kUser6, LCDCol, "Firing 2");
         m_Shooter.Fire();
-        autoLoop(0, 0, 2.0f);
+        autoLoop(0, 0, 3.0f);
         m_LCD.println(Line.kUser6, LCDCol, "Firing 3");
         m_Shooter.Fire();
-        autoLoop(0, 0, 2.0f);
+        autoLoop(0, 0, 3.0f);
         m_LCD.println(Line.kUser6, LCDCol, "Turning Off");
         m_Shooter.TurnOff();
         autoLoop(0, 0, 0.25f);

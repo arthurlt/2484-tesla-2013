@@ -163,6 +163,6 @@ public class Shooter
     private SpeedController     m_speed_controller;
     private Piston		m_piston;
     private int			m_tick_count	= 0;
-    private int                 m_spin_up_ticks = 50;
+    private int                 m_spin_up_ticks = 300;
     private int                 m_piston_ticks	= 100;
 };
